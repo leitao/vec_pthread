@@ -16,8 +16,7 @@ void *work(void *id){
 	register vector signed int vecC, vecD, vecE;
 	register vector bool d;
 
-	int i;
-	int l;
+	int i, l, z;
 
 #ifdef DEBUG
 	printf("thread %lx\n", id);
@@ -29,6 +28,11 @@ void *work(void *id){
 		vecD = vec_add(vecC, vecB);
 		vecE = vec_add(vecA, vecD);
 
+		for (z =0 ; z < 1024*1024*1024; z++){
+			pthread_spin_lock(&lock);
+			pthread_spin_unlock(&lock);
+		}
+
 		d = vec_cmpeq(vecE, final);
 
 		l = pthread_spin_unlock(&lock);
@@ -37,6 +41,8 @@ void *work(void *id){
 			printf("%lx %lx %lx %lx\n", vecE[0], vecE[1], vecE[2], vecE[3]);
 			printf("%lx %lx %lx %lx\n", final[0], final[1], final[2], final[3]);
 			printf("%lx %lx %lx %lx\n", d[0], d[1], d[2], d[3]);
+
+			asm (".long 0x0"); // causes a core dump
 		}
 
 	}
