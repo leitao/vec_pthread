@@ -1,2 +1,2 @@
 all:
-	gcc -static -g vector.c -lpthread
+	gcc -O0 -g vector.c -lpthread
